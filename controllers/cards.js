@@ -4,7 +4,7 @@ const Card = require('../models/card');
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     // eslint-disable-next-line no-unused-vars
     .catch((e) => {
       const err = new Error('Переданы некорректные данные');
@@ -17,7 +17,7 @@ module.exports.createCard = (req, res, next) => {
 //-----------------Контроллер получения данных всех карточек---------
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }));
+    .then((cards) => res.send( cards ));
 };
 //----------------Контроллер удаления карточки---------------
 module.exports.deleteCard = (req, res, next) => {

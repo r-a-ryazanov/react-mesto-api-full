@@ -1,6 +1,7 @@
 const cardsRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { createCard, getCards, deleteCard } = require('../controllers/cards.js');
+// eslint-disable-next-line import/no-unresolved
 const auth = require('../middlewares/Auth');
 
 cardsRouter.post('/', celebrate({

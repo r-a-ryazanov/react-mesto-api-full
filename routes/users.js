@@ -4,6 +4,7 @@ const { celebrate, Joi } = require('celebrate');
 
 const { createUser, getUsers, getUser, login } = require('../controllers/users.js');
 
+// eslint-disable-next-line import/no-unresolved
 const auth = require('../middlewares/Auth');
 
 usersRouter.get('/', auth, getUsers);

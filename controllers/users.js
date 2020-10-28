@@ -14,14 +14,14 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 module.exports.createUser = (req, res, next) => {
   const { name = 'Имя пользователя', about = 'О пользователе', avatar = 'https://img2.freepng.ru/20180420/uqq/kisspng-user-profile-computer-icons-internet-bot-5ad9d0002bbf61.8168987615242240001792.jpg', email, password } = req.body;
   bcrypt.hash(password, 10)
-    // eslint-disable-next-line max-len
     .then((hash) => User.create({ name, about, avatar, email, password: hash }))
     .then((user) => res.send({ data: { _id: user._id, email: user.email } }))
     .catch((e) => {
       const err = new Error('Переданы некорректные данные');
       err.statusCode = 400;
-      if (e.message.indexOf('duplicate key error') >= 0 && e.name !== 'ValidationError') {
+      if (e.name === 'MongoError' && e.code === 11000) {
         err.message = 'Пользователь существует';
+        err.statusCode = 409;
       }
       next(err);
     });
@@ -36,7 +36,6 @@ module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new Error('Not Found'))
     .then((user) => res.send({ data: user }))
-    // eslint-disable-next-line no-unused-vars
     .catch((e) => {
       const err = new Error('Пользователь не найден');
       err.statusCode = 404;
@@ -47,6 +46,22 @@ module.exports.getUser = (req, res, next) => {
       next(err);
     });
 };
+//---------------Контроллер получения информации о пользователе по ID-----------
+module.exports.getUserId = (req, res, next) => {
+  User.findById(req.params._id)
+    .orFail(new Error('Not Found'))
+    .then((user) => res.send({ data: user }))
+    .catch((e) => {
+      const err = new Error('Пользователь не найден');
+      err.statusCode = 404;
+      if (e.name === 'CastError' && e.message !== 'Not Found') {
+        err.message = 'Переданы некорректные данные';
+        err.statusCode = 400;
+      }
+      next(err);
+    });
+};
+
 //---------------Контроллер аутентификации------------
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;

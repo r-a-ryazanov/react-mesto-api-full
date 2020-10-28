@@ -17,7 +17,7 @@ module.exports.createCard = (req, res, next) => {
 //-----------------Контроллер получения данных всех карточек---------
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send( cards ));
+    .then((cards) => res.send(cards));
 };
 //----------------Контроллер удаления карточки---------------
 module.exports.deleteCard = (req, res, next) => {
@@ -30,6 +30,10 @@ module.exports.deleteCard = (req, res, next) => {
           Card.findByIdAndRemove(req.params._id)
             .then((card) => res.send({ data: card }));
           // eslint-disable-next-line no-unused-vars
+        } else {
+          const err = new Error('Запрещено удалять карточки других пользователей');
+          err.statusCode = 403;
+          next(err);
         }
       }
     })

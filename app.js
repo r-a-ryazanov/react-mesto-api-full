@@ -26,13 +26,16 @@ app.get('/crash-test', () => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
+// ----------Роутинг для пользователей-------------------
+app.use('/', usersRouter);
 // ----------Роутинг для карточек-------------------
 app.use('/cards', cardsRouter);
-// ----------Роутинг для пользователей-------------------
-app.use('/users', usersRouter);
+
 // ----------Обработка запросов к несуществующим ресурсам-------------------
-app.use('/*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+app.all('/*', (req, res, next) => {
+  const err = new Error('Запрашиваемый ресурс не найден');
+  err.statusCode = 404;
+  next(err);
 });
 app.use(errorLogger);
 app.use(errors());

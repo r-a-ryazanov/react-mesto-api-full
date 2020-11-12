@@ -10,7 +10,7 @@ const cardsRouter = require('./routes/cards.js');
 const usersRouter = require('./routes/users.js');
 const { requestLogger, errorLogger } = require('./middlewares/Logger');
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3010 } = process.env;
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
